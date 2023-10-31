@@ -1,0 +1,39 @@
+from openpyxl import load_workbook
+
+# Carregue a planilha do Excel
+workbook = load_workbook('C:/Users/pfonseca/Downloads/Carol RPD15 Python/Setembro.xlsx')
+
+# Obtenha a planilha ativa
+sheet = workbook.active
+
+# Variável para rastrear a linha com a palavra "SUBTOTAL==>"
+linha_subtotal = None
+
+# Percorra todas as células da planilha
+for row in sheet.iter_rows():
+    for cell in row:
+        # Verifique se a célula contém a palavra "SUBTOTAL==>"
+        if cell.value == "SUBTOTAL==>":
+            # Armazene o número da linha
+            linha_subtotal = cell.row
+
+        # Verifique se a variável linha_subtotal foi definida
+        if linha_subtotal is not None and cell.row == linha_subtotal:
+            # Verifique se a primeira célula da linha acima contém a palavra "DEVOLUÇÕES"
+            if sheet.cell(row=linha_subtotal-1, column=1).value == "DEVOLUÇÕES":
+                # Copie as duas primeiras células da linha acima de "DEVOLUÇÕES"
+                value_a = sheet.cell(row=linha_subtotal-2, column=1).value
+                value_b = sheet.cell(row=linha_subtotal-2, column=2).value
+                # Cole os valores nas duas primeiras células da linha "SUBTOTAL==>"
+                sheet.cell(row=linha_subtotal, column=1).value = value_a
+                sheet.cell(row=linha_subtotal, column=2).value = value_b
+            else:
+                # Copie as duas primeiras células da linha acima de "SUBTOTAL==>"
+                value_a = sheet.cell(row=linha_subtotal-1, column=1).value
+                value_b = sheet.cell(row=linha_subtotal-1, column=2).value
+                # Cole os valores nas duas primeiras células da linha "SUBTOTAL==>"
+                sheet.cell(row=linha_subtotal, column=1).value = value_a
+                sheet.cell(row=linha_subtotal, column=2).value = value_b
+
+# Salve a nova planilha
+workbook.save('C:/Users/pfonseca/Downloads/Carol RPD15 Python/Nova_Planilha.xlsx')
